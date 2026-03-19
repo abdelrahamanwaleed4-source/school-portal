@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// This is the Student "model" — it defines what a student looks like
+model Student {
+  id        Int      @id @default(autoincrement())  // Auto: 1, 2, 3...
+  name      String                                   // Required text
+  email     String   @unique                         // No duplicates!
+  age       Int                                      // Required number
+  major     String   @default("CS")                  // Default = "CS"
+  gpa       Float    @default(0)                     // Decimal number
+  isActive  Boolean  @default(true)                  // true/false
+  createdAt DateTime @default(now())                 // Auto timestamp
+  updatedAt DateTime @updatedAt                      // Auto-updates
+}
