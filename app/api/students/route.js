@@ -21,43 +21,43 @@ export async function GET() {
 }
 
 // ===== POST — Create a new student =====
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { name, email, age, major, gpa } = body;
 
-    // Validate: make sure required fields exist
-    if (!name || !email || !age) {
+    // 🔴 1. Required fields validation
+    if (!name || !email || !age || !major) {
       return Response.json(
-        { error: "Name, email, and age are required!" },
+        { error: "All fields (name, email, age, major) are required" },
         { status: 400 }
       );
     }
 
-    // Create the student in the database
+    // 🔴 2. Create student
     const student = await prisma.student.create({
       data: {
         name,
         email,
-        age: parseInt(age),
-        major: major || "CS",
-        gpa: gpa ? parseFloat(gpa) : 0,
+        age: Number(age),
+        major,
+        gpa: gpa ? Number(gpa) : null,
       },
     });
 
-    return Response.json(
-      { message: "Student created! ✅", student },
-      { status: 201 }
-    );
-  } catch (error) {
-    if (error.code === "P2002") {
+    return Response.json(student);
+  } catch (err) {
+    // 🔴 3. Handle duplicate email
+    if (err.code === "P2002") {
       return Response.json(
-        { error: "A student with this email already exists!" },
+        { error: "Email already exists" },
         { status: 400 }
       );
     }
+
+    // 🔴 4. General error
     return Response.json(
-      { error: error.message },
+      { error: "Something went wrong" },
       { status: 500 }
     );
   }

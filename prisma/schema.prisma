@@ -17,4 +17,13 @@ model Student {
   isActive  Boolean  @default(true)                  // true/false
   createdAt DateTime @default(now())                 // Auto timestamp
   updatedAt DateTime @updatedAt                      // Auto-updates
+  courses Course[]
+}
+
+model Course {
+  id      Int      @id @default(autoincrement())
+  title   String
+  code    String   @unique
+
+  students Student[]  // 🔗 Many-to-Many relation
 }
